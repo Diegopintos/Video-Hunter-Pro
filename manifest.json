@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Video Hunter Pro",
+  "description": "Extrae enlaces de video de cualquier página e iframe bajo demanda.",
+  "version": "2.0",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Analizar videos"
+  },
+  "icons": {
+    "16": "icons/16x16.png",
+    "48": "icons/48x48.png",
+    "128": "icons/128x128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
