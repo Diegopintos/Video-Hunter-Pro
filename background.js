@@ -47,8 +47,20 @@ async function saveVideo(tabId, urls, source = 'network') {
   }
 }
 
+// Rutas que identifican una PÁGINA de embed, no un stream de vídeo.
+// Ej: streamwish.com/e/ID  →  página del reproductor (HTML), no es el vídeo.
+const EMBED_PAGE_RE = /\/(?:e|embed|v|f|play)\/[a-zA-Z0-9_-]{4,}(?:\.html?)?(?:[?#].*)?$/i;
+const EMBED_FILE_RE = /\/embed-[a-zA-Z0-9_-]{4,}\.html?(?:[?#].*)?$/i;
+
+function isEmbedPage(url) {
+  try { return EMBED_PAGE_RE.test(url) || EMBED_FILE_RE.test(url); }
+  catch(e) { return false; }
+}
+
 function isVideoUrl(url) {
   if (!url || typeof url !== 'string' || !url.startsWith('http')) return false;
+  // Descartar páginas de embed aunque el dominio esté en VIDEO_PATTERNS
+  if (isEmbedPage(url)) return false;
   const lurl = url.toLowerCase();
   return VIDEO_PATTERNS.some(p => lurl.includes(p));
 }
@@ -77,16 +89,21 @@ const VIDEO_PATTERNS = [
   // Streamtape
   'streamtape.com/get_video', 'streamtape.net/get_video',
   'stape.fun', 'streamta.pe',
-  // Netu / HQQ
+  // Netu / HQQ (dominios de embed + CDN — isEmbedPage filtrará las páginas)
   'netu.ac', 'hqq.tv', 'hqq.to', 'waaw.tv',
-  // Vidguard / Vgfplay / Vidhide
+  // Vidguard / Vgfplay / Vidhide / VIDhide (CDN delivery)
   'vidguard.to', 'vgfplay.com', 'listeamed.net', 'bembed.net', 'vidhide.com',
+  'vidhide.to', 'vidhide.net', 'vid-guard.com', 'vid-hide.com',
   // Powvideo
   'powvideo.net', 'powv.net',
   // StreamHide / StreamVid / Smashystream
   'streamhide.to', 'streamvid.net', 'smashy.stream', 'guccihide.com',
   // VOE
   'voe.sx', 'voe-network.net',
+  // Streamplay
+  'streamplay.xyz', 'streamplay.to', 'streamplay.lol', 'streamplay.cc',
+  // Byse
+  'byse.cc', 'byse.net', 'byse.to',
   // Otros
   'upstream.to', 'up-load.io', 'mixdrop.co', 'mixdrop.to',
   'vidoza.net', 'streamlare.com', 'vudeo.net',
@@ -100,6 +117,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'videosEncontrados' && sender.tab) {
     saveVideo(sender.tab.id, request.urls, request.source || 'dom');
     sendResponse({ ok: true });
+  }
+
+  // Petición de fetch desde el service worker (bypasa CORS para iframes difíciles)
+  if (request.action === 'fetchEmbed') {
+    const { url, referer } = request;
+    if (!url) { sendResponse({ ok: false }); return true; }
+    fetch(url, {
+      headers: {
+        'Referer':         referer || '',
+        'User-Agent':      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept':          'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+      },
+      credentials: 'omit',
+      cache: 'no-store',
+    }).then(r => r.text()).then(text => {
+      sendResponse({ ok: true, text });
+    }).catch(err => {
+      sendResponse({ ok: false, error: String(err) });
+    });
+    return true; // respuesta asíncrona
   }
 
   if (request.action === 'getVideos') {
@@ -153,7 +191,7 @@ chrome.tabs.onRemoved.addListener(async (tabId) => {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const CURRENT_VERSION   = chrome.runtime.getManifest().version;
-const UPDATE_CHECK_URL  = 'https://raw.githubusercontent.com/TU_USUARIO/Video-Hunter-Pro/main/update.json';
+const UPDATE_CHECK_URL  = 'https://raw.githubusercontent.com/Diegopintos/Video-Hunter-Pro/main/update.json';
 const UPDATE_ALARM_NAME = 'videoHunterUpdateCheck';
 const UPDATE_INTERVAL_HOURS = 6;
 
