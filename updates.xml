@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  Archivo de manifiesto de actualización para Chrome Extension update_url.
+  Reemplaza __EXTENSION_ID__ con el ID real de tu extensión (visible en chrome://extensions).
+  Aloja este archivo en una URL pública y ponla en el campo update_url del manifest.json.
+-->
+<gupdate xmlns='http://www.google.com/update2/response' protocol='2.0'>
+  <app appid='__EXTENSION_ID__'>
+    <updatecheck
+      codebase='https://github.com/TU_USUARIO/Video-Hunter-Pro/releases/latest/download/video-hunter-pro.crx'
+      version='3.1' />
+  </app>
+</gupdate>

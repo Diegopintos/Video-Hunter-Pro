@@ -1,0 +1,7 @@
+{
+  "version": "3.1",
+  "min_version": "3.0",
+  "release_url": "https://github.com/TU_USUARIO/Video-Hunter-Pro/releases/latest",
+  "download_url": "https://github.com/TU_USUARIO/Video-Hunter-Pro/releases/latest/download/video-hunter-pro.crx",
+  "notes": "Actualización de extractores para Streamtape, Vidguard, Powvideo y nuevos mirrors de servidores."
+}

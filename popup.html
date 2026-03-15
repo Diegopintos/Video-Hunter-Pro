@@ -58,12 +58,45 @@
     .btn-download { background: var(--success); }
 
     .empty-msg { text-align: center; color: #94a3b8; padding: 30px 10px; font-size: 13px; }
+
+    /* Banner de actualización */
+    #updateBanner {
+      display: none;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white; padding: 10px 14px;
+      font-size: 12px; font-weight: 600;
+      align-items: center; justify-content: space-between; gap: 8px;
+    }
+    #updateBanner.visible { display: flex; }
+    #updateBanner .update-text { flex: 1; line-height: 1.4; }
+    #updateBanner .update-text small { font-weight: 400; opacity: 0.9; display: block; margin-top: 2px; }
+    .btn-update {
+      background: white; color: #d97706; border: none;
+      padding: 5px 10px; border-radius: 6px; font-size: 11px;
+      font-weight: 700; cursor: pointer; white-space: nowrap;
+    }
+    .btn-update:hover { background: #fef3c7; }
+    .btn-dismiss {
+      background: none; border: none; color: white;
+      font-size: 16px; cursor: pointer; padding: 0 2px; opacity: 0.8; line-height: 1;
+    }
+    .btn-dismiss:hover { opacity: 1; }
   </style>
 </head>
 <body>
   <div class="header">
     <strong>🎬 Video Hunter Pro</strong>
     <span id="badge" style="background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:10px; font-size:11px">0</span>
+  </div>
+
+  <!-- Banner de actualización (oculto por defecto) -->
+  <div id="updateBanner">
+    <div class="update-text">
+      ⬆️ Nueva versión disponible: <span id="updateVersion"></span>
+      <small id="updateNotes"></small>
+    </div>
+    <button class="btn-update" id="btnUpdate">Actualizar</button>
+    <button class="btn-dismiss" id="btnDismiss" title="Ignorar">✕</button>
   </div>
 
   <div class="container">

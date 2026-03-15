@@ -2,14 +2,30 @@
   "manifest_version": 3,
   "name": "Video Hunter Pro",
   "description": "Extrae enlaces de video de cualquier página e iframe bajo demanda.",
-  "version": "2.0",
+  "version": "3.1",
   "permissions": [
     "activeTab",
     "scripting",
-    "storage"
+    "storage",
+    "webRequest",
+    "tabs",
+    "alarms",
+    "notifications"
   ],
   "host_permissions": [
     "<all_urls>"
+  ],
+  "update_url": "https://Diegopintos.github.io/Video-Hunter-Pro/updates.xml",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
   ],
   "action": {
     "default_popup": "popup.html",
